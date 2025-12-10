@@ -450,7 +450,27 @@ def update_mataf_correlation_from_csv(
             f"unique_pairs={len(seen_pairs)}"
         )
 
-        tf_for_alert = "1H"
+        tf_for_alert = "5m"
+
+        try:
+            msg = _build_corr_matrix_message(
+                conn=conn,
+                as_of_time=as_of_time,
+                timeframe=tf_for_alert,
+                num_period=num_period,
+            )
+        except Exception as e:
+            msg = (
+                "🔃 QuantFlow_FX_Correlation\n"
+                f"as_of_time: {as_of_time}\n"
+                f"Timeframe: {tf_for_alert}, periods: {num_period}\n"
+                f"Error building matrix: {e}"
+            )
+
+        notify_telegram(msg, ChatType.ALERT)
+
+
+        tf_for_alert = "15m"
 
         try:
             msg = _build_corr_matrix_message(
